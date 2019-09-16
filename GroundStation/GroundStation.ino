@@ -30,13 +30,17 @@ void loop() {
     log_micros=false; //make sure no more data added to array while we report it
 
          Serial.println("Orbiter entered sight of View");
-         Serial.println("Doing 60° sweep");
-         
-                    // insert 60deg sweep here
+         Serial.println("Doing 60° sweep from 60° to 120°");
+            afrom = 60;
+            ato = 120;
+            vallow = map(afrom, 0, 180, 1638, 7864);
+            valhigh = map(ato, 0, 180, 1638, 7864);
+                   
+                     // insert 60deg sweep here
                     
          Serial.println("Doing sweep to 0");
          
-                    // insert sweep to 0 here
+                     // insert sweep to 0 here
                     
          Serial.println("Waiting 30s");
          delay(30000);
