@@ -1,4 +1,3 @@
-
 int ir_pin=3; // digital pin the IR reciever Vout is connected to
 
 long no_change_time=40000; //No change in IR pin for this duration (microseconds) will mark the end of pattern.
@@ -9,7 +8,8 @@ int count=0; // Number of times logged to array.
 boolean log_micros=true;  //Flag to indicate if able to log times to array
 long last_micros=0; //previous array time entry
 
-
+byte afrom, ato;
+int vallow,valhigh;
 
 void setup() {
    pinMode(ir_pin, INPUT);
