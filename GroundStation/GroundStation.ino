@@ -5,10 +5,8 @@
 #include <Servo.h>
 
 #ifndef STASSID
-//#define STASSID "PiFi"
-//#define STAPSK  "letmeaccessyourdata"
-#define STASSID "hack.me.if.you.can"
-#define STAPSK  "NikJanSve201823"
+#define STASSID "PiFi"
+#define STAPSK  "letmeaccessyourdata"
 #endif
 
 const char* host = "esp8266-webupdate";
