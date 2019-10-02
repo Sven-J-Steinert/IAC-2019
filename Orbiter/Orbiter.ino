@@ -27,8 +27,6 @@ char controll = '0';       // data variable
 const char* host = "esp32";
 const char* ssid = "PiFi";
 const char* password = "letmeaccessyourdata";
-//const char* ssid = "hack.me.if.you.can";
-//const char* password = "NikJanSve201823";
 
 WebServer server(80);
 
