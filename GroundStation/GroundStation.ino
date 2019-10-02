@@ -1,67 +1,119 @@
-int ir_pin=3; // digital pin the IR reciever Vout is connected to
+#include <ESP8266WiFi.h>
+#include <WiFiClient.h>
+#include <ESP8266WebServer.h>
+#include <ESP8266mDNS.h>
+#include <Servo.h>
 
-long no_change_time=40000; //No change in IR pin for this duration (microseconds) will mark the end of pattern.
-const int array_size=300; //Max times to log.  If array is full, it will report the pattern to that point. 
-long t_array[array_size]; //Array of times of when the IR pin changes state.
-int count=0; // Number of times logged to array.
+#ifndef STASSID
+//#define STASSID "PiFi"
+//#define STAPSK  "letmeaccessyourdata"
+#define STASSID "hack.me.if.you.can"
+#define STAPSK  "NikJanSve201823"
+#endif
 
-boolean log_micros=true;  //Flag to indicate if able to log times to array
-long last_micros=0; //previous array time entry
+const char* host = "esp8266-webupdate";
+const char* ssid = STASSID;
+const char* password = STAPSK;
 
-byte afrom, ato;
-int vallow,valhigh;
+#define IR_PIN 12
+#define Servo_PIN 13
 
-void setup() {
-   pinMode(ir_pin, INPUT);
+Servo myservo;  // create servo object to control a servo
+int pos = 170;    // variable to store the servo position
+byte x;
+int i=0,t=0;
+bool ir=false;
 
-   //attach an interupt to log when the IR pin changes state
-   attachInterrupt(digitalPinToInterrupt(ir_pin),interupt,CHANGE);
+ESP8266WebServer server(80);
+const char* serverIndex = "<form method='POST' action='/update' enctype='multipart/form-data'><p>Groundstation esp8266-webupdate</p><input type='file' name='update'><input type='submit' value='Update'></form>";
 
-  //Initiate Serial for Communication
-   Serial.begin(9600); 
-    
-}
-
-
-
-void loop() {
-
-  if (count>0){
-    log_micros=false; //make sure no more data added to array while we report it
-
-         Serial.println("Orbiter entered sight of View");
-         Serial.println("Doing 60° sweep from 60° to 120°");
-            afrom = 60;
-            ato = 120;
-            vallow = map(afrom, 0, 180, 1638, 7864);
-            valhigh = map(ato, 0, 180, 1638, 7864);
-                   
-                     // insert 60deg sweep here
-                    
-         Serial.println("Doing sweep to 0");
-         
-                     // insert sweep to 0 here
-                    
-         Serial.println("Waiting 30s");
-         delay(30000);
-
-      log_micros=true; count=0; //Reset array
-    }
-}
+void setup(void) {
+  pinMode(IR_PIN, INPUT);
+  myservo.attach(Servo_PIN); 
+  myservo.write(pos);
   
+  Serial.begin(115200);  Serial.println();  Serial.println("Booting Sketch...");
+  
+  WiFi.mode(WIFI_AP_STA);
+  WiFi.begin(ssid, password);
+  if (WiFi.waitForConnectResult() == WL_CONNECTED) {
+    MDNS.begin(host);
+    server.on("/", HTTP_GET, []() {
+      server.sendHeader("Connection", "close");
+      server.send(200, "text/html", serverIndex);
+    });
+    server.on("/update", HTTP_POST, []() {
+      server.sendHeader("Connection", "close");
+      server.send(200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
+      ESP.restart();
+    }, []() {
+      HTTPUpload& upload = server.upload();
+      if (upload.status == UPLOAD_FILE_START) {
+        Serial.setDebugOutput(true);
+        WiFiUDP::stopAll();
+        Serial.printf("Update: %s\n", upload.filename.c_str());
+        uint32_t maxSketchSpace = (ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000;
+        if (!Update.begin(maxSketchSpace)) { //start with max available size
+          Update.printError(Serial);
+        }
+      } else if (upload.status == UPLOAD_FILE_WRITE) {
+        if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
+          Update.printError(Serial);
+        }
+      } else if (upload.status == UPLOAD_FILE_END) {
+        if (Update.end(true)) { //true to set the size to the current progress
+          Serial.printf("Update Success: %u\nRebooting...\n", upload.totalSize);
+        } else {
+          Update.printError(Serial);
+        }
+        Serial.setDebugOutput(false);
+      }
+      yield();
+    });
+    server.begin();
+    MDNS.addService("http", "tcp", 80);
 
-// Interupt to log each time the IR signal changes state 
-void interupt(){
-  if (log_micros){
-    long m=micros();
-    if (count>0&&(m-last_micros)>no_change_time){
-      log_micros=false;
-    }else{
-       t_array[count]=m;
-       count++;
-       last_micros=m;
-       if (count>=array_size) log_micros=false;
-     }
+    Serial.printf("Ready! Open http://%s.local in your browser\n", host);
+  } else {
+    Serial.println("WiFi Failed");
   }
 }
-  
+
+void loop(void) {
+   x = digitalRead(12);
+  if (x == 0){
+    ir=true;
+    i=0;
+   }
+if ((x == 1)&&(i>=50)){
+  ir=false;
+}
+  i++;
+if (ir==true){
+  t++;
+}
+
+
+if ((ir == true)&&(t>=10)){
+    myservo.write(pos);              
+    pos -= 2;
+    t=0;                     
+  if(pos <= 6){
+    pos=170;
+    myservo.write(pos); 
+    delay(1000);
+    t=0;i=0;
+  }
+}
+
+if (ir == false){
+  pos=170;
+   myservo.write(pos);
+}
+
+// Serial.print("x:");Serial.print(x);Serial.print(" IR: ");Serial.print(ir);Serial.print(" i:");Serial.print(i);Serial.print(" t:");Serial.println(t);
+
+  server.handleClient();
+  MDNS.update();
+  delay(30);
+}
