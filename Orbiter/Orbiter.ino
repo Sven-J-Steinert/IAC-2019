@@ -25,7 +25,7 @@ byte incomingPacket[1];  // buffer for incoming packets
 char controll = '0';       // data variable
 
 const char* host = "esp32";
-const char* ssid = "PiFi";
+const char* ssid = "PiFi.internal";
 const char* password = "letmeaccessyourdata";
 
 WebServer server(80);
