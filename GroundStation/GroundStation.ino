@@ -5,7 +5,7 @@
 #include <Servo.h>
 
 #ifndef STASSID
-#define STASSID "PiFi"
+#define STASSID "PiFi.internal"
 #define STAPSK  "letmeaccessyourdata"
 #endif
 
