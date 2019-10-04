@@ -9,78 +9,39 @@
 VL53L0X sensorR;
 VL53L0X sensorL;
 
-const int led1 = 4, in2 = 15, led2 = 13, in4 = 12;
+#define led1 4
+#define led2 13
+#define in2 15
+#define in4 12
 
 const int freq = 50000;
 const int M1FChannel = 0, M2FChannel = 1;
 const int resolution = 8;
 
-int r = 300, i = 1+(8/r);  // r = radius to center, i = rpmA/rpmI
+int r = 140, i = 1+(8/r);  // r = radius to center, i = rpmA/rpmI
 byte pwmI, pwmA ;
-int distR, distL, dd, ddold=0, delta, calibR = 0,calibL = 0, offsetL = 5100, offsetR = 4400;
+int distR, distL, dd=5, distT=0, calibR = 0,calibL = 0, offsetL = 5100, offsetR = 4400;
 byte bb[4] ;
 
 WiFiUDP udp;
 byte incomingPacket[1];  // buffer for incoming packets
-char controll = '0';       // data variable
+char controll = '1';       // data variable
 
 const char* host = "esp32";
-const char* ssid = "PiFi.internal";
-const char* password = "letmeaccessyourdata";
+//const char* ssid = "PiFi.internal";
+//const char* password = "letmeaccessyourdata";
+const char* ssid = "hack.me.if.you.can";
+const char* password = "NikJanSve201823";
 
 WebServer server(80);
 
-/*
- * Login page
- */
-
-const char* loginIndex = 
- "<form name='loginForm'>"
-    "<table width='20%' bgcolor='A09F9F' align='center'>"
-        "<tr>"
-            "<td colspan=2>"
-                "<center><font size=4><b>ESP32 Login Page</b></font></center>"
-                "<br>"
-            "</td>"
-            "<br>"
-            "<br>"
-        "</tr>"
-        "<td>Username:</td>"
-        "<td><input type='text' size=25 name='userid'><br></td>"
-        "</tr>"
-        "<br>"
-        "<br>"
-        "<tr>"
-            "<td>Password:</td>"
-            "<td><input type='Password' size=25 name='pwd'><br></td>"
-            "<br>"
-            "<br>"
-        "</tr>"
-        "<tr>"
-            "<td><input type='submit' onclick='check(this.form)' value='Login'></td>"
-        "</tr>"
-    "</table>"
-"</form>"
-"<script>"
-    "function check(form)"
-    "{"
-    "if(form.userid.value=='admin' && form.pwd.value=='admin')"
-    "{"
-    "window.open('/serverIndex')"
-    "}"
-    "else"
-    "{"
-    " alert('Error Password or Username')/*displays error message*/"
-    "}"
-    "}"
-"</script>";
- 
 /*
  * Server Index Page
  */
 const char* serverIndex = 
 "<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>"
 "<form method='POST' action='#' enctype='multipart/form-data' id='upload_form'>"
+"<p>Orbiter esp32-webupdate</p>"
    "<input type='file' name='update'>"
         "<input type='submit' value='Update'>"
     "</form>"
@@ -123,9 +84,7 @@ void intToByte ( int i){
  bb[3]= i  & 0xFF;
 }
 
-/*
- * setup function
- */
+
 void setup(void) {
   
     Serial.begin(115200);
@@ -155,10 +114,6 @@ void setup(void) {
   Serial.println("mDNS responder started");
   /*return index page which is stored in serverIndex */
   server.on("/", HTTP_GET, []() {
-    server.sendHeader("Connection", "close");
-    server.send(200, "text/html", loginIndex);
-  });
-  server.on("/serverIndex", HTTP_GET, []() {
     server.sendHeader("Connection", "close");
     server.send(200, "text/html", serverIndex);
   });
@@ -202,15 +157,12 @@ void setup(void) {
 
   r = 140;
   calcPWM();
-  //ledcWrite(M1FChannel, pwmA);
-  //ledcWrite(M2FChannel, pwmI);
-
   
   pinMode(led1, OUTPUT); 
   pinMode(led2, OUTPUT); 
-  
   pinMode(0, OUTPUT);
   pinMode(16, OUTPUT);
+  
   digitalWrite(0, LOW);
   digitalWrite(16, LOW);
   
@@ -231,25 +183,16 @@ void setup(void) {
   delay(100);
   sensorL.setMeasurementTimingBudget(200000);
 
-}
+    digitalWrite(led1, HIGH);
+    digitalWrite(led2, HIGH);
 
-void loop(void) {
-  
-readUDP();
 
-if (controll == '0'){
-    
-    server.handleClient();
+while (dd>3 || dd<-3) {
     distR = sensorR.readRangeSingleMillimeters()-(offsetR/100);
     delay(200);
     distL = sensorL.readRangeSingleMillimeters()-(offsetL/100);
     delay(200);
     dd = distR -distL;
-    Serial.print(distR);
-    Serial.print(" ");
-    Serial.print(distL);
-    Serial.print(" ");
-    Serial.println(dd);
     if ((dd<3)&&(dd>-3)){
       ledcWrite(M1FChannel, 0);
       ledcWrite(M2FChannel, 0);
@@ -263,31 +206,35 @@ if (controll == '0'){
       ledcWrite(M2FChannel, 50);
     }
 }
+      ledcWrite(M1FChannel, 0);
+      ledcWrite(M2FChannel, 0);
+  digitalWrite(led1, LOW);
+  digitalWrite(led2, LOW);
+  delay(500);
+}
+
+void loop(void) {
+  
+readUDP();
 
 if (controll == '1'){
   server.handleClient();
-  distR = sensorR.readRangeSingleMillimeters()-(offsetR/100);
+  
+    distR = sensorR.readRangeSingleMillimeters()-(offsetR/100);
     delay(200);
     distL = sensorL.readRangeSingleMillimeters()-(offsetL/100);
     delay(200);
     dd = distR -distL;
-    if (dd > ddold+10){
-      dd = dd-((dd-ddold)/2);
-    }else{
-      ddold = dd;
-    }
-    Serial.print(distR);
-    Serial.print(" ");
-    Serial.print(distL);
-    Serial.print(" ");
-    Serial.println(dd);
+       
     calcPWM();
+    
     if (dd>5){
       int val = pwmA +(4*dd);
       pwmA = round( min(val, 255));
     }
     if (dd<-5){
-      pwmI = pwmI + 30;
+      int val = pwmI +(-4*dd);
+      pwmI = round( min(val, 255));
     }
     
     ledcWrite(M1FChannel, pwmA);
@@ -342,28 +289,15 @@ udp.beginPacket(ServerIP, 2000);
  udp.flush();
 delay(200);
 }
+
 }
 
-/*
- delta= dist -(r-70);
-if (delta < -10){
-  int val = round(pwmI*(1+(-delta/100)));
-  pwmI = min(val, 255);
-  ledcWrite(M2FChannel, pwmI);
-}
-
-if (delta > 10){
-  int val = round(pwmA*(1+delta/100));
-  pwmA = min(val, 255);
-  ledcWrite(M1FChannel, pwmA);
-}
-*/
 
 
 
 void calcPWM()
 {
-pwmI = round(1.05*(((2*3.14*r/180)+3)/0.165));  //0.16
+pwmI = round(1.05*(((2*3.14*r/180)+3)/0.165));
 pwmA = round(((2*3.14*(r+80)/180)+3)/0.165);
 }
 
