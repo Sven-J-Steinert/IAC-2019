@@ -5,8 +5,10 @@
 #include <Servo.h>
 
 #ifndef STASSID
-#define STASSID "PiFi.internal"
-#define STAPSK  "letmeaccessyourdata"
+//#define STASSID "PiFi.internal"
+//#define STAPSK  "letmeaccessyourdata"
+#define STASSID "hack.me.if.you.can"
+#define STAPSK  "NikJanSve201823"
 #endif
 
 const char* host = "esp8266-webupdate";
@@ -19,8 +21,10 @@ const char* password = STAPSK;
 Servo myservo;  // create servo object to control a servo
 int pos = 170;    // variable to store the servo position
 byte x;
-int i=0,t=0;
+int i=0,t=0, c=0;
 bool ir=false;
+
+unsigned long check_wifi = 10000;
 
 ESP8266WebServer server(80);
 const char* serverIndex = "<form method='POST' action='/update' enctype='multipart/form-data'><p>Groundstation esp8266-webupdate</p><input type='file' name='update'><input type='submit' value='Update'></form>";
@@ -78,40 +82,52 @@ void setup(void) {
 }
 
 void loop(void) {
+/*
+  // if wifi is down, try reconnecting every 5 seconds
+  if ((WiFi.status() != WL_CONNECTED) && (millis() > check_wifi)) {
+    WiFi.disconnect(true);
+    delay(50);
+    WiFi.mode(WIFI_STA);
+    delay(100);
+    WiFi.begin(ssid, password);
+    check_wifi = millis() + 5000;
+  }
+  */
+  // get IR
    x = digitalRead(12);
   if (x == 0){
     ir=true;
     i=0;
    }
-if ((x == 1)&&(i>=50)){
+if ((x == 1)&&(i>=150)){
   ir=false;
 }
   i++;
 if (ir==true){
   t++;
+  c++;
 }
 
 
-if ((ir == true)&&(t>=10)){
+if ((ir == true)&&(t>=10)&&(c>=100)){
     myservo.write(pos);              
-    pos -= 2;
+    pos -= 1;
     t=0;                     
   if(pos <= 6){
     pos=170;
     myservo.write(pos); 
     delay(1000);
-    t=0;i=0;
+    t=0;i=0;c=0;
   }
 }
 
 if (ir == false){
   pos=170;
    myservo.write(pos);
+   c=0;
 }
-
-// Serial.print("x:");Serial.print(x);Serial.print(" IR: ");Serial.print(ir);Serial.print(" i:");Serial.print(i);Serial.print(" t:");Serial.println(t);
 
   server.handleClient();
   MDNS.update();
-  delay(30);
+  delay(20);
 }
