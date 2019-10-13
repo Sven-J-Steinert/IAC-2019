@@ -406,13 +406,13 @@ void Task1code( void * pvParameters ){
    
     int packetSize = udp.parsePacket();
   if (packetSize){ 
-    int len = udp.read(incomingPacket, 7);
+    udp.read(incomingPacket, 7);
     digitalWrite(led1, HIGH);
     delay(100);
     digitalWrite(led1, LOW);
     
    if (tcmode==0){
- 
+    // Bitshift char -> byte
     tcmode = incomingPacket[0] - 0x30;
     tctype = incomingPacket[2] - 0x30;
     String x1,x2,x3;
@@ -422,14 +422,7 @@ void Task1code( void * pvParameters ){
     String myString = x1+x2+x3; 
     tctime = myString.toInt();
     targettime = millis() + tctime*1000;
-
-    udp.beginPacket(ServerIP, 2006);
-    udp.write(tcmode);
-    udp.write(tctype);
-    udp.write(tctime);
-    udp.endPacket();
-    udp.flush();
-
+    // clear 
     incomingPacket[0]=0;
     incomingPacket[1]=0;
     incomingPacket[2]=0;
@@ -439,7 +432,11 @@ void Task1code( void * pvParameters ){
     incomingPacket[6]=0;
     incomingPacket[7]=0;
     }
-
+    // send answer
+    udp.beginPacket(ServerIP, 2006);
+    udp.write(1);
+    udp.endPacket();
+    udp.flush();
     }
     
 if (currenttime > lasttime+2000){
@@ -479,5 +476,3 @@ if (picavail){
    
   } 
 }
-
-
