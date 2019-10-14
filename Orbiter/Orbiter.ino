@@ -26,7 +26,7 @@ byte tcmode=0, tctype=0, tctime=0;
 bool lowOrbit=true, picavail=false, insight=false;
 
 unsigned long currenttime,targettime,lasttime=0;
-unsigned long check_wifi = 30000;
+unsigned long check_wifi = 20000;
 
 WiFiUDP udp;
 char incomingPacket[7];  // buffer for incoming packets
@@ -320,33 +320,43 @@ void loop(void) {
     ledcWrite(M1FChannel, pwmA);
     ledcWrite(M2FChannel, pwmI);
 
+if (insight){
+  digitalWrite(led2, HIGH);
+}else{
+  digitalWrite(led2, LOW);
+}
 
 // run TC 
 currenttime = millis();
 if (currenttime > targettime){
   if (tcmode == 1){
     digitalWrite(led1, HIGH);
-      if (tctype == 1){
         //move to low Orbit
              ledcWrite(M1FChannel, 255);
-             ledcWrite(M2FChannel, 80);
-             delay(1500);
+             ledcWrite(M2FChannel, 70);
+             delay(4000);
         ledcWrite(M1FChannel, 100);
         ledcWrite(M2FChannel, 100);
-        delay(1500);
+        delay(2000);
         digitalWrite(led1, LOW);
-      }
-    if (tctype == 2){
-        //move to high Orbit
-            ledcWrite(M1FChannel, 200);
-            ledcWrite(M2FChannel, 180);
-            delay(3000);
-            digitalWrite(led1, LOW);
-    }
     tcmode = 0;
     tctype = 0;
     tctime = 0;
   }
+ if (tcmode == 3){
+  digitalWrite(led1, HIGH);
+        //move to high Orbit
+            ledcWrite(M1FChannel, 200);
+            ledcWrite(M2FChannel, 195);
+            delay(2500);
+            ledcWrite(M1FChannel, 255);
+            ledcWrite(M2FChannel, 70);
+            delay(1000);
+            digitalWrite(led1, LOW);
+    tcmode = 0;
+    tctype = 0;
+    tctime = 0;
+    }
  if (tcmode == 2){
     digitalWrite(led1, HIGH);
     delay(100);
@@ -393,15 +403,13 @@ void Task1code( void * pvParameters ){
 
   for(;;){
 
-    // if wifi is down, try reconnecting every 5 seconds
-  if ((WiFi.status() != WL_CONNECTED) && (millis() > check_wifi)) {
+    // reconnects every 2 seconds
+  if (millis() > check_wifi) {
     WiFi.disconnect(true);
-    delay(50);
     WiFi.mode(WIFI_STA);
-    delay(100);
     WiFi.begin(ssid, password);
     udp.begin(WiFi.localIP(),2000);
-    check_wifi = millis() + 5000;
+    check_wifi = millis() + 2000;
   }
    
     int packetSize = udp.parsePacket();
@@ -411,7 +419,19 @@ void Task1code( void * pvParameters ){
     delay(100);
     digitalWrite(led1, LOW);
     
-   if (tcmode==0){
+   if (String(incomingPacket[0]) == "t"){
+    insight = true;
+    udp.beginPacket(ServerIP, 2010);
+    udp.write(1);
+    udp.endPacket();
+    udp.flush();
+   }else if (String(incomingPacket[0]) == "f"){
+    insight = false;
+    udp.beginPacket(ServerIP, 2010);
+    udp.write(1);
+    udp.endPacket();
+    udp.flush();
+   }else if (tcmode==0){
     // Bitshift char -> byte
     tcmode = incomingPacket[0] - 0x30;
     tctype = incomingPacket[2] - 0x30;
@@ -422,7 +442,13 @@ void Task1code( void * pvParameters ){
     String myString = x1+x2+x3; 
     tctime = myString.toInt();
     targettime = millis() + tctime*1000;
-    // clear 
+        // send answer
+    udp.beginPacket(ServerIP, 2006);
+    udp.write(1);
+    udp.endPacket();
+    udp.flush();
+    }
+        // clear 
     incomingPacket[0]=0;
     incomingPacket[1]=0;
     incomingPacket[2]=0;
@@ -431,12 +457,6 @@ void Task1code( void * pvParameters ){
     incomingPacket[5]=0;
     incomingPacket[6]=0;
     incomingPacket[7]=0;
-    }
-    // send answer
-    udp.beginPacket(ServerIP, 2006);
-    udp.write(1);
-    udp.endPacket();
-    udp.flush();
     }
     
 if (currenttime > lasttime+2000){
