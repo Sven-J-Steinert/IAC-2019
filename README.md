@@ -23,6 +23,10 @@ October 21-25, 2019 | Washington, D.C., USA
 |1| Case| 3D SLA Printed |
 |2| Wheels| Lasercutted 3mm MDF, rubber coated |
 
+# Orbiter Wiring
+
+![alt text](https://abload.de/img/orbitter_steckplatine69jxb.png)
+
 # Groundstation Partlist
  
 |QTY|	DESCRIPTION	|PART NAME|
