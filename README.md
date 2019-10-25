@@ -39,6 +39,10 @@ October 21-25, 2019 | Washington, D.C., USA
 |1| Case | 3D FDM Printed |
 |1| Globe | Ø 14cm, white striped |
 
+# Node
+
+![alt text](https://abload.de/img/img_20191014_234754a8j5m.jpg)
+
 # Node Partlist
  
 |QTY|	DESCRIPTION	|PART NAME|
