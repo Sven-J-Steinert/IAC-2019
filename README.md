@@ -2,9 +2,10 @@
 Developed for Telespazio VEGA. Presented on IAC - International Astronautical Congress <br>
 October 21-25, 2019 | Washington, D.C., USA 
 
+# Orbiter
 ![alt text](https://abload.de/img/img_20191014_1454398wjwb.jpg)
 
-# Orbiter Partlist
+## Orbiter Partlist
  
 |QTY|	DESCRIPTION	|PART NAME|
 | :---   | :---   | :---   |
@@ -23,11 +24,11 @@ October 21-25, 2019 | Washington, D.C., USA
 |1| Case| 3D SLA Printed |
 |2| Wheels| Lasercutted 3mm MDF, rubber coated |
 
-# Orbiter Wiring
+## Orbiter Wiring
 
 ![alt text](https://abload.de/img/orbitter_steckplatinepljjh.png)
 
-# Groundstation Partlist
+## Groundstation Partlist
  
 |QTY|	DESCRIPTION	|PART NAME|
 | :---   | :---   | :---   |
@@ -43,7 +44,7 @@ October 21-25, 2019 | Washington, D.C., USA
 
 ![alt text](https://abload.de/img/img_20191014_234754a8j5m.jpg)
 
-# Node Partlist
+## Node Partlist
  
 |QTY|	DESCRIPTION	|PART NAME|
 | :---   | :---   | :---   |
