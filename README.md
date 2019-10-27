@@ -26,7 +26,7 @@ October 21-25, 2019 | Washington, D.C., USA
 
 ## Orbiter Wiring
 
-![alt text](https://abload.de/img/orbitter_steckplatinepljjh.png)
+![alt text](https://abload.de/img/sjcjx55cc4ke6.png)
 
 # Groundstation
 
