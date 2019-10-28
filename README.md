@@ -1,6 +1,7 @@
 # Showcase for Satellite Routines
 Developed for Telespazio VEGA. Presented on IAC - International Astronautical Congress <br>
 October 21-25, 2019 | Washington, D.C., USA 
+This setup consists of 3 parts: The Groundstation that is circeled by the Orbiter and the Node that connects both to an internet endpoint. Sending commands to the Orbiter as well as pulling the Telemetry from it is only possible while it is in sight of view of the satellite dish. This creates a connected and disconnected timespan in the periodic circling.
 
 # Orbiter
 ![alt text](https://abload.de/img/drawing_isometric-1kqkhj.png)
@@ -21,7 +22,7 @@ October 21-25, 2019 | Washington, D.C., USA
 |1|	Ball-Bearing| L-0123|
 |1|	PCB| 30mm x 70mm|
 |1|	Switch| ON OFF Toggle|
-|6|	Resistor| 10 kΩ|
+|4|	Resistor| 10 kΩ|
 |1| Case| 3D SLA Printed |
 |2| Wheels| Lasercutted 3mm MDF, rubber coated |
 
