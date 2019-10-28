@@ -1,6 +1,6 @@
 # Showcase for Satellite Routines
 Developed for Telespazio VEGA. Presented on IAC - International Astronautical Congress <br>
-October 21-25, 2019 | Washington, D.C., USA 
+October 21-25, 2019 | Washington, D.C. , USA <br>
 This setup consists of 3 parts: The Groundstation that is circeled by the Orbiter and the Node that connects both to an internet endpoint. Sending commands to the Orbiter as well as pulling the Telemetry from it is only possible while it is in sight of view of the satellite dish. This creates a connected and disconnected timespan in the periodic circling.
 
 # Orbiter
