@@ -3,6 +3,9 @@ Developed for Telespazio VEGA. Presented on IAC - International Astronautical Co
 October 21-25, 2019 | Washington, D.C., USA 
 
 # Orbiter
+![alt text](https://abload.de/img/drawing_isometric-1gwjr4.png)
+![alt text](https://abload.de/img/drawing_bottom-1pwkzv.png)
+![alt text](https://abload.de/img/drawing_bottom_vert-1m2jxk.png)
 ![alt text](https://abload.de/img/img_20191014_1454398wjwb.jpg)
 
 ## Orbiter Partlist
