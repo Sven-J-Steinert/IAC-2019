@@ -4,6 +4,9 @@ This setup consists of 3 parts: The [Orbiter](#orbiter) that is circling around 
 
 # Orbiter
 ![alt text](https://abload.de/img/drawing_isometric-1kqkhj.png)
+
+While driving a base speed pwm for a circle, the perpendicular regulating is done by minimizing the difference of the two laser distance mesurements to the surface of the globe. Due to the timemanagement, the network calls and the regulation are splitted up on both cores of the ESP32. Since there is no Analog Pin left to use on the Cam version, an Attiny has been set up as an I²C Device that is doing the battery- and solar voltage masurement.
+
 ![alt text](https://abload.de/img/img_20191014_1454398wjwb.jpg)
 
 ## Orbiter Partlist
@@ -21,6 +24,8 @@ This setup consists of 3 parts: The [Orbiter](#orbiter) that is circling around 
 |1|	Ball-Bearing| L-0123|
 |1|	PCB| 30mm x 70mm|
 |1|	Switch| ON OFF Toggle|
+|2|	Status LED | red, green|
+|2|	Resistor| 100 Ω|
 |4|	Resistor| 10 kΩ|
 |1| Case| 3D SLA Printed |
 |2| Wheels| Lasercutted 3mm MDF, rubber coated |
