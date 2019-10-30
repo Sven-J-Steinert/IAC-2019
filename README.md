@@ -36,6 +36,8 @@ While driving a base speed pwm for a circle, the perpendicular regulating is don
 
 # Groundstation
 
+The Groundstation contains 2 parts: the foundation where the most hardware is hidden underneath the globe and the satelite dish where an infrared sensor is mounted into. Every time the Orbiter enters the sight of view, the laser mesurements of the Orbiter are triggering the infrared sensor. After detection it switches the insight value on the Node and starts to following the orbiter. On maximum turning angle it resets back into starting position for the next pass.
+
 ## Groundstation Partlist
  
 |QTY|	DESCRIPTION	|PART NAME|
@@ -51,6 +53,8 @@ While driving a base speed pwm for a circle, the perpendicular regulating is don
 # Node
 
 ![alt text](https://abload.de/img/img_20191014_234754a8j5m.jpg)
+
+The Node supports 
 
 ## Node Partlist
  
