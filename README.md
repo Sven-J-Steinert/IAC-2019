@@ -8,7 +8,6 @@ This setup consists of 3 parts: The [Orbiter](#orbiter) that is circling around 
 While driving a base speed pwm for a circle, the perpendicular regulating is done by minimizing the difference of the two laser distance mesurements to the surface of the globe. Due to the timemanagement, the network calls and the regulation are splitted up on both cores of the ESP32. Since there is no Analog Pin left to use on the Cam version, an Attiny has been set up as an I²C Device that is doing the battery- and solar voltage masurement.
 
 ![alt text](https://abload.de/img/img_20191014_145444v6kib.jpg)
-![alt text](https://abload.de/img/img_20191014_1454398wjwb.jpg)
 
 ## Orbiter Partlist
  
@@ -39,7 +38,7 @@ While driving a base speed pwm for a circle, the perpendicular regulating is don
 
 ![alt text](https://abload.de/img/img_20191014_234358mgkrl.jpg)
 
-The Groundstation contains 2 parts: the foundation where the most hardware is hidden underneath the globe and the satelite dish where an infrared sensor is mounted into. Every time the Orbiter enters the sight of view, the laser mesurements of the Orbiter are triggering the infrared sensor. After detection it switches the insight value on the Node and starts to following the orbiter. On maximum turning angle it resets back into starting position for the next pass.
+The Groundstation contains 2 parts: the foundation where the most hardware is hidden underneath the globe and the satelite dish where an infrared sensor is mounted into. Every time the Orbiter enters the sight of view, the laser mesurements of the Orbiter are triggering the infrared sensor. After detection it switches the insight value on the Node and starts to following the orbiter. On maximum turning angle or loss of signal it resets back into starting position for the next pass.
 
 ## Groundstation Partlist
  
@@ -57,7 +56,7 @@ The Groundstation contains 2 parts: the foundation where the most hardware is hi
 
 ![alt text](https://abload.de/img/img_20191014_234754a8j5m.jpg)
 
-The Node supports 
+The Node hosts the internal Network as well as the communication endpoints. Telemetry data can either be pushed per POST on an specific index like Elasticsearch or pulled from it via a GET request. Telecomands are done by recieving a POST that will be parsed and executed. 
 
 ## Node Partlist
  
