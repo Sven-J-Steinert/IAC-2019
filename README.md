@@ -56,7 +56,7 @@ The Groundstation contains 2 parts: the foundation where the most hardware is hi
 
 ![alt text](https://abload.de/img/img_20191014_234754a8j5m.jpg)
 
-The Node hosts the internal Network as well as the communication endpoints. Telemetry data can either be pushed per POST on an specific index like Elasticsearch or pulled from it via a GET request. Telecomands are done by recieving a POST that will be parsed and executed. 
+The Node hosts the internal Network as well as the communication endpoints. Telemetry data can either be pushed per POST on an specific index like Elasticsearch or pulled from it via a GET request. Telecomands are done by recieving a POST that will be parsed and executed afterwards. 
 
 ## Node Partlist
  
