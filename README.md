@@ -3,11 +3,11 @@ Developed for Telespazio VEGA. Presented on the International Astronautical Cong
 This setup consists of 3 parts: The [Orbiter](#orbiter) that is circling around the [Groundstation](#groundstation) and the [Node](#node) that connects both to an internet endpoint. Sending commands to the Orbiter as well as pulling the Telemetry from it is only possible while it is in sight of view of the satellite dish. This creates a connected and disconnected timespan in the periodic circling.
 
 # Orbiter
-![alt text](https://abload.de/img/drawing_isometric-1kqkhj.png)
+![alt text](docs/img/drawing_isometric-1kqkhj.png)
 
 While driving a base speed pwm for a circle, the perpendicular regulating is done by minimizing the difference of the two laser distance mesurements to the surface of the globe. Due to the timemanagement, the network calls and the regulation are splitted up on both cores of the ESP32. Since there is no Analog Pin left to use on the Cam version, an Attiny has been set up as an I²C Device that is doing the battery- and solar voltage masurement.
 
-![alt text](https://abload.de/img/img_20191014_145444v6kib.jpg)
+![alt text](docs/img/img_20191014_145444v6kib.jpg)
 
 ## Orbiter Partlist
  
@@ -32,11 +32,11 @@ While driving a base speed pwm for a circle, the perpendicular regulating is don
 
 ## Orbiter Wiring
 
-![alt text](https://abload.de/img/sjcjx55cc4ke6.png)
+![alt text](docs/img/sjcjx55cc4ke6.png)
 
 # Groundstation
 
-![alt text](https://abload.de/img/img_20191014_234358mgkrl.jpg)
+![alt text](docs/img/img_20191014_234358mgkrl.jpg)
 
 The Groundstation contains 2 parts: the foundation where the most hardware is hidden underneath the globe and the satelite dish where an infrared sensor is mounted into. Every time the Orbiter enters the sight of view, the laser mesurements of the Orbiter are triggering the infrared sensor. After detection it switches the insight value on the Node and starts to following the orbiter. On maximum turning angle or loss of signal it resets back into starting position for the next pass.
 
@@ -54,7 +54,7 @@ The Groundstation contains 2 parts: the foundation where the most hardware is hi
 
 # Node
 
-![alt text](https://abload.de/img/img_20191014_234754a8j5m.jpg)
+![alt text](docs/img/img_20191014_234754a8j5m.jpg)
 
 The Node hosts the internal Network as well as the communication endpoints. Telemetry data can either be pushed per POST on an specific index like Elasticsearch or pulled from it via a GET request. Telecomands are done by recieving a POST that will be parsed and executed afterwards. 
 
